@@ -1,0 +1,17 @@
+Title : Casting light on the dark side of brain imaging
+Authors : Raz, Amir & Thibault, Robert T.
+ISBN : 9780128161791
+Publisher : London Academic Press 2019
+Title : An Introduction to Statistical Learning: with Applications in R
+Authors : Gareth James & Daniela Witten
+ISBN : 9780120161594
+Publisher : McGraw Hills
+Title : Data Mining and Analysis: Fundamental Concepts and Algorithms
+Authors : Mohammed J. Zaki, Wagner Meira Jr
+ISBN : 9780521766333
+Publisher : Cambridge University Press
+Title : demo
+Authors : demo
+ISBN : 123456789
+Publisher : demo
+
