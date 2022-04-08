@@ -329,7 +329,8 @@ class Book_database {
             std::string name;
             int number = 0; // To count the number of books searched
             std::cout << "\nEnter Book's Name : ";
-            std::cin >> name;
+            std::cin.ignore();
+            getline(std::cin, name);
             filei.open(fname.c_str());
             std::cout << "\n\n----------- SEARCH RESULTS ------------\n";
             while (!filei.eof())
@@ -387,13 +388,16 @@ class Book_database {
             fname = "books_data.txt";  // File storing all the book data
 
             std::cout << "\nEnter Title of Book : ";
-            std::cin >> title;
+            std::cin.ignore();
+            getline(std::cin, title);
             std::cout << "\nEnter Authors of Book : ";
-            std::cin >> author;
+            std::cin.ignore();
+            getline(std::cin, author);
             std::cout << "\nEnter ISBN of Book : ";
             std::cin >> isbn;
             std::cout << "\nEnter Publisher of Book : ";
-            std::cin >> publication;
+            std::cin.ignore();
+            getline(std::cin, publication);
             fileo.open(fname, std::ios::app);
             fileo<<"\nTitle : "<<title<<std::endl<<"Authors : "<<author<<std::endl<<"ISBN : "<<isbn<<std::endl<<"Publisher : "<<publication;
             std::cout<<"\nSuccessfully Added a New Book :)\n";
@@ -406,7 +410,8 @@ class Book_database {
             std::string name;
             int number = 0; // To count the number of books searched
             std::cout << "\nEnter Book's Name : ";
-            std::cin >> name;
+            std::cin.ignore();
+            getline(std::cin, name);
             filei.open(fname.c_str());
 
             // Create a copy of the file `books_data.txt`
@@ -451,7 +456,8 @@ class Book_database {
                     std::cin >> choice;
                     if ((choice == "Y") || (choice == "y")){
                         std::cout << "\nEnter New Title of Book (Type `none` if you don't want to update this) : ";
-                        std::cin >> title12;
+                        std::cin.ignore();
+                        getline(std::cin, title12);
                         if (title12 != "none"){
                             std::fstream file("copy.txt", std::ios::in);
                             title12 = "Title : " + title12;
@@ -476,7 +482,8 @@ class Book_database {
                             file.close();
                         }
                         std::cout << "\nEnter New Authors of Book (Type `none` if you don't want to update this) : ";
-                        std::cin >> author1;
+                        std::cin.ignore();
+                        getline(std::cin, author1);
                         if (author1 != "none"){
                             std::fstream file("copy.txt", std::ios::in);
                             author1 = "Authors : " + author1;
@@ -526,7 +533,8 @@ class Book_database {
                             file.close();
                         }
                         std::cout << "\nEnter New Publisher of Book (Type `none` if you don't want to update this) : ";
-                        std::cin >> publication1;
+                        std::cin.ignore();
+                        getline(std::cin, publication1);
                         if (publication1 != "none"){
                             std::fstream file("copy.txt", std::ios::in);
                             publication1 = "Publisher : " + publication1;
@@ -571,7 +579,8 @@ class Book_database {
             std::string name;
             int number = 0; // To count the number of books searched
             std::cout << "\nEnter Book's Name : ";
-            std::cin >> name;
+            std::cin.ignore();
+            getline(std::cin, name);
             filei.open(fname.c_str());
 
             // Create a copy of the file `books_data.txt`
