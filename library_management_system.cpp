@@ -9,6 +9,13 @@
 #include <cstring>
 #include <algorithm>
 #include <sstream>
+#include "TextTable.h"
+
+/* ************** REFERENCES ****************** */
+/*
+The `TextTable.h` is taken from https://github.com/haarcuba/cpp-text-table 
+*/
+
 
 
 /* ********************* ASCII Arts ********************* */
@@ -159,7 +166,7 @@ class User {
     public:
         /* *************** LOGIN AND REGISTRATION *************** */
 
-        // Function to check validity od username and password for logging in
+        // Function to check validity of username and password for logging in
         std::string usn;   // Store username
         int tm;
 
@@ -199,6 +206,7 @@ class User {
             std::string ans, psd, name, fname, bio, usern, pw, line, nusn, rol;
             std::ofstream fileo;
             std::ifstream filei;
+            std::ofstream user_file;
             std::cout << "-----------------------Welcome to our Library Management System!-----------------------\n";
             while(exit==0)
             {
@@ -237,14 +245,16 @@ class User {
                         filei.close();
                         break;
                     }
-                    else{
+                    else
+                    {
                         std::cout<<"\nWrong Username or Password!\nPlease Try Again.\n";
                     }
                     // cout<<endl;
                 }
                 else if(choice==2)
                 {
-                    std::cout<<"\nEnter your name: ";
+                    user_file.open("user_data.txt", std::ios::app);
+                    std::cout << "\nEnter your name: ";
                     std::cin.ignore();
                     getline(std::cin,name);
                     std::cout<<"\nCreate a username: ";
@@ -261,6 +271,7 @@ class User {
                     //cout<<fname;
                     fileo.open(fname.c_str());
                     fileo<<usn<<std::endl<<name<<std::endl<<psd<<std::endl<<role<<std::endl;
+                    user_file<<usn<<std::endl<<name<<std::endl<<role<<std::endl;
                     std::cout<<"\nYOU ARE SUCCESSFULLY REGISTERED AS A " << role << " :)\n";
                     
                     // Adding bio for users
@@ -635,23 +646,122 @@ class Book_database {
 
 // User Database class
 class User_database {
-    private:
+    public:
         // std::vector<std::string> user_list{}; // Array of Strings to store the list of users
+        void display_all_users(){
+            // delete_last_line("user_data.txt");
+            std::ifstream filein("user_data.txt");
 
-        void search_user(){
-            // This function is to search for books
+            printf("\n --------- USER LIST ---------\n");
+
+            TextTable user_table( '-', '|', '+' );
+            user_table.add("Username");
+            user_table.add("Name");
+            user_table.add("Role");
+            user_table.endOfRow();
+
+            std::string username, name, role;
+            while (!filein.eof())
+            {
+                getline(filein, username);
+                if (username == ""){
+                    break;
+                }
+                getline(filein, name);
+                getline(filein, role);
+
+                user_table.add(username);
+                user_table.add(name);
+                user_table.add(role);
+                user_table.endOfRow();
+            }
+            user_table.setAlignment( 2, TextTable::Alignment::RIGHT );
+            std::cout << user_table;
+        }
+
+        // Function to check validity of username and password for adding new user
+        std::string usn;   // Store username
+        int tm;
+
+        void valid(std::string str, std::string role) //function declaration for keeping records   
+        {
+            std::string dir, user;
+            std::ifstream file;
+            dir = str + role +".txt";   // Directory (file name) to store user credentials
+            file.open(dir.c_str());
+            if(!file.is_open() && file.fail())
+            {
+                //file.close();
+                return;
+            }
+            else
+            {
+                tm++;
+                if(tm==3)
+                {
+                    std::cout<<"\nThis Username Already Exists\nPlease Try Again.";
+                    //file.close();
+                    return;
+                }
+                std::cout<<"\nThis Username Already Exists!\nCreate A Username:";
+                std::cin>>usn;
+                //file.close();
+                valid(usn, role);
+            }
         };
 
-        void add_user(){
-            // This function is to add new books to the library
+        void add_user()
+        {
+            // This function is to add new users
+            std::string ans, psd, name, fname, bio, usern, pw, line, nusn, rol;
+            std::ofstream fileo;
+            std::ifstream filei;
+            std::ofstream user_file;
+            user_file.open("user_data.txt", std::ios::app);
+            std::cout << "\nEnter the user's name: ";
+            std::cin.ignore();
+            getline(std::cin,name);
+            std::cout<<"\nCreate a username: ";
+            std::cin>>usn;
+            std::cout<<"\nSpecify the role of the user: ";
+            std::cin>>rol;
+            // Convert to uppercase
+            std::transform(rol.begin(), rol.end(), rol.begin(), ::toupper);
+
+            tm=0;
+            valid(usn, rol);
+            if(tm>=3)
+            {
+                return;
+            }
+
+            std::cout<<"\nCreate a password: ";
+            std::cin>>psd;
+            fname=usn + rol +".txt";
+            //cout<<fname;
+            fileo.open(fname.c_str());
+            fileo<<usn<<std::endl<<name<<std::endl<<psd<<std::endl<<rol<<std::endl;
+            user_file<<usn<<std::endl<<name<<std::endl<<rol<<std::endl;
+            std::cout<<"\nTHE USER IS SUCCESSFULLY REGISTERED AS A " << rol << " :)\n";
+            
+            // Adding bio for users
+            std::cout<<"\nAdd bio and press enter if done: ";
+            std::cin.ignore();
+            getline(std::cin,bio);
+            fileo<<bio<<std::endl;
+            std::cout<<"\nThe user's bio is saved as: "<<bio<<std::endl;
+            fileo.close();
+            std::cout << "\n----------PROFILE IS SUCCESSFULLY CREATED----------\n";
         };
 
-        void update_user(){
-            // This function is to update the information about the books
+        void update_user()
+        {
+            // This function is to update the information about the users
         };
 
-        void delete_user(){
-            // This function is to delete any of the books present
+        void delete_user()
+        {
+            // This function is to delete any of the active users
         };
 };
 
@@ -758,9 +868,13 @@ class Librarian : public User {
                 std::cin >> choice;
 
                 Book_database books;
-                
+                User_database users;
+
                 if (choice == 1){
                     books.display_all_books();
+                }
+                if (choice == 2){
+                    users.display_all_users();
                 }
                 else if (choice == 3){
                     books.add_books();
@@ -770,6 +884,9 @@ class Librarian : public User {
                 }
                 else if (choice == 5){
                     books.delete_books();
+                }
+                else if (choice == 6){
+                    users.add_user();
                 }
                 else if (choice == 9)
                 {
