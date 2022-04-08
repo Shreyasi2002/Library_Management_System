@@ -55,7 +55,7 @@ Choose one option:
 Press Any key and Enter to exit
 ```
 
-Let's register as a Student / Professor. The users can also add a bio in their profile section (while creating their account) :
+Let's register as a **Student / Professor**. The users can also add a bio in their **profile** section (while creating their account) :
 ```
 Enter your name: Shreyasi Mandal
 
@@ -97,20 +97,19 @@ Bio: This is the bio section
 ------------PROFESSOR MENU------------
 
 1. See Book List
-2. List Books in Possession
-3. Search Book
-4. Issue Book
-5. Check Fine Generated
-6. Clear Fine Amount
-7. Logout
+2. Search Book
+3. Issue Book
+4. Check Fine Generated
+5. Clear Fine Amount
+6. Logout
 ```
 As we can see from above, the profile of the user (including role) is shown once the user logs in, and the menu of the professor is visible.
 
-**I was only able to implement 1. See Book List, 3. Search Book, and 7. Logout options...**
+**I was only able to implement 1. See Book List, 2. Search Book, and 7. Logout options...**
 
 The books data is stored in `books_data.txt`
 
-The book list is shown as follows -
+The **book list** is shown as follows -
 ```
             /;
            / |'-,.
@@ -229,4 +228,114 @@ Now, lets look at the **Librarian** view -
 8. Delete User
 9. Logout
 ```
-Here, **I have implemented 1. See Book List, 3. Add Book, 4. Update Existing Book, 5. Delete Book**
+Here, **I have implemented 1. See Book List, 2. See User List, 3. Add Book, 4. Update Existing Book, 5. Delete Book, 6. Add User and 9. Logout options**
+
+The **book list** is shown similarly as shown above.
+
+The data about the users is stored separately in `users_data.txt`. Upon successful registration of users, the username, name and role of the user gets appended in the file.
+The **user list** is shown in the form of a table. To create the table in the terminal, external help was taken - 
+- The `TextTable.h` is taken from https://github.com/haarcuba/cpp-text-table
+
+```
+ --------- USER LIST ---------
++-----------+---------------+---------+
+|Username   |Name           |     Role|
++-----------+---------------+---------+
+|shreyansi20|Shreyasi Mandal|  STUDENT|
++-----------+---------------+---------+
+|admin      |Admin          |LIBRARIAN|
++-----------+---------------+---------+
+|demo       |Demo           |PROFESSOR|
++-----------+---------------+---------+
+```
+
+Upon adding a book (by the **librarian**) the details of the book will get appended to the file `books_data.txt`
+```
+Enter Title of Book : Software Engineering
+
+Enter Authors of Book : Demo Author
+
+Enter ISBN of Book : 123456789109
+
+Enter Publisher of Book : Mc Graw Hills    
+
+Successfully Added a New Book :)
+```
+
+For updating any book, the librarian has to first search for the book (which he/she wants to update) -
+```
+Enter Book's Name : s
+
+
+----------- CHOOSE THE BOOK YOU WANT TO UPDATE ------------
+
+---------- 1 ----------
+Title : Casting light on the dark side of brain imaging
+Authors : Raz, Amir & Thibault, Robert T.
+ISBN : 9780128161791
+Publisher : London Academic Press 2019
+
+
+Do you want to update this book? [Y/N] : n
+
+---------- 2 ----------
+Title : An Introduction to Statistical Learning: with Applications in R
+Authors : Gareth James & Daniela Witten
+ISBN : 9780120161594
+Publisher : McGraw Hills
+
+
+Do you want to update this book? [Y/N] : n
+
+---------- 3 ----------
+Title : Data Mining and Analysis: Fundamental Concepts and Algorithms
+Authors : Mohammed J. Zaki, Wagner Meira Jr
+ISBN : 9780521766333
+Publisher : Cambridge University Press
+
+
+Do you want to update this book? [Y/N] : n
+
+---------- 4 ----------
+Title : Software Engineering
+Authors : Demo Author
+ISBN : 123456789109
+Publisher : Mc Graw Hills
+
+
+Do you want to update this book? [Y/N] : y
+
+Enter New Title of Book (Type `none` if you don't want to update this) : none
+
+Enter New Authors of Book (Type `none` if you don't want to update this) : demo
+
+Enter New ISBN of Book (Type `none` if you don't want to update this) : none
+
+Enter New Publisher of Book (Type `none` if you don't want to update this) : McGraw Hills
+
+---------------- BOOK SUCCESSFULLY UPDATED ----------------
+```
+
+Similarly, to delete a book the user has to first search for the "title" of the book and then choose y/n respectively.
+
+All the changes to the data will be displayed in the .txt file.
+
+The process of adding user is similar to the registration process.
+
+```
+Enter the user's name: demo
+
+Create a username: demo
+
+Specify the role of the user: student
+
+Create a password: abcd
+
+THE USER IS SUCCESSFULLY REGISTERED AS A STUDENT :)
+
+Add bio and press enter if done: this is the bio :)
+
+The user's bio is saved as: this is the bio :)
+
+----------PROFILE IS SUCCESSFULLY CREATED----------
+```
