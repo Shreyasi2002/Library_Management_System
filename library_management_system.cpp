@@ -558,8 +558,9 @@ class Book_database {
                             }
                             file.close();
                         }
+                        printf("\n---------------- BOOK SUCCESSFULLY UPDATED ----------------\n");
                     }
-                    printf("\n---------------- BOOK SUCCESSFULLY UPDATED ----------------\n");
+                    
                 }
             };
             // Get the last lines from `copy.txt` and keep it in `books_data.txt`
