@@ -518,7 +518,7 @@ class Book_database {
                         std::cin >> publication1;
                         if (publication1 != "none"){
                             std::fstream file("copy.txt", std::ios::in);
-                            publication1 = "Publication : " + publication1;
+                            publication1 = "Publisher : " + publication1;
                             while(std::getline(file, line)) {
                                 // std::cout << line << std::endl;
 
@@ -562,8 +562,20 @@ class Book_database {
             std::cout << "\nEnter Book's Name : ";
             std::cin >> name;
             filei.open(fname.c_str());
+
+            // Create a copy of the file `books_data.txt`
+            std::ofstream out_file {"copy.txt"};
+            std::string copy_line;
+            while(getline(filei, copy_line)){
+                out_file << copy_line << '\n';
+                NUMBER_OF_LINES++;
+            }
+            filei.close();
+            out_file.close();
+
+            filei.open(fname.c_str());
             std::cout << "\n\n----------- CHOOSE THE BOOK YOU WANT TO DELETE ------------\n";
-            std::ofstream fileout("temp.txt");  //Temporary file
+            std::ofstream temp("temp.txt");  //Temporary file
             while (!filei.eof())
             {
                 std::string choice;
@@ -585,13 +597,38 @@ class Book_database {
                     std::cout << author << std::endl;
                     std::cout << isbn << std::endl;
                     std::cout << publication << std::endl;
-                    std::cout << "\n\nDo you want to update this book? [Y/N] : ";
+                    std::cout << "\n\nDo you want to delete this book? [Y/N] : ";
                     std::cin >> choice;
                     if ((choice == "Y") || (choice == "y")){
-                        // updatedatabase(title);
+                        std::ifstream fin;
+                        fin.open("copy.txt");
+                        std::string del_line;
+
+                        while (getline(fin, del_line))
+                        {
+                            if ((del_line != title) && (del_line != author) && (del_line != isbn) && (del_line != publication))
+                            {
+                                // std::cout << del_line << "\n";
+                                temp << del_line << std::endl;
+                            }
+                        }
+                        temp.close();
+                        fin.close();
+                        remove("copy.txt");
+                        rename("temp.txt","copy.txt");
                     }
+                    printf("\n -------------- BOOK SUCCESSFULLY DELETED --------------\n");
                 }
             };
+            // Get the last lines from `copy.txt` and keep it in `books_data.txt`
+            filei.close();
+            get_last_lines("books_data.txt");
+            delete_last_line("books_data.txt");
+            if (number == 0)
+            {
+                // Printing ASCII art
+                printf("%s\n", NOTFOUND);
+            }
         };
 };
 
@@ -630,24 +667,22 @@ class Professor : public User {
             while (exit == 0)
             {
                 std::cout << "\n\n------------PROFESSOR MENU------------\n\n";
-                std::cout << "1. See Book List\n2. List Books in Possession\n3. Search Book\n4. Issue Book\n5. Check Fine Generated\n6. Clear Fine Amount\n7. Logout\n";
+                std::cout << "1. See Book List\n2. Search Book\n3. Issue Book\n4. Check Fine Generated\n5. Clear Fine Amount\n6. Logout\n";
                 std::cin >> choice;
 
                 Book_database books;
-                if (choice == 1)
-                {
+                if (choice == 1){
                     books.display_all_books();
                 }
-                else if (choice == 3)
-                {
+                else if (choice == 2){
                     books.search_books();
                 }
-                else if (choice == 7)
+                else if (choice == 6)
                 {
                     logout = 1;
                     exit = 1;
                 }
-            }
+            };
             return logout;
         };
 
@@ -677,17 +712,17 @@ class Student : public User {
             while (exit == 0)
             {
                 std::cout << "\n\n------------STUDENT MENU------------\n\n";
-                std::cout << "1. See Book List\n2.List Books in Possession\n3.Search Book\n4.Issue Book\n5.Check Fine Generated\n6.Clear Fine Amount\n7.Logout\n";
+                std::cout << "1. See Book List\n2. Search Book\n3. Issue Book\n4. Check Fine Generated\n5. Clear Fine Amount\n6. Logout\n";
                 std::cin >> choice;
 
                 Book_database books;
                 if (choice == 1){
                     books.display_all_books();
                 }
-                else if (choice == 3){
+                else if (choice == 2){
                     books.search_books();
                 }
-                else if (choice == 7)
+                else if (choice == 6)
                 {
                     logout = 1;
                     exit = 1;

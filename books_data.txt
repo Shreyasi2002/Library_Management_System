@@ -10,7 +10,3 @@ Title : Data Mining and Analysis: Fundamental Concepts and Algorithms
 Authors : Mohammed J. Zaki, Wagner Meira Jr
 ISBN : 9780521766333
 Publisher : Cambridge University Press
-Title : abcd
-Authors : abcd
-ISBN : 123456789
-Publication : abcd
