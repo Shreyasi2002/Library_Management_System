@@ -8,6 +8,7 @@
 #include <cctype>
 #include <cstring>
 #include <algorithm>
+#include <sstream>
 
 
 /* ********************* ASCII Arts ********************* */
@@ -102,64 +103,52 @@ const char *NOTFOUND = "\n\
 
 /* *********** HELPER FUNCTIONS *********** */
 
-void toCopy()
+int NUMBER_OF_LINES = 0;
+
+int count_lines()
 {
+    // This function counts the lines present in books_data.txt
+    std::ifstream myfile("copy.txt");
     std::string line;
-    //For writing text file
-    //Creating ofstream & ifstream class object
-    std::ifstream ini_file ("temp.txt");
-    std::ofstream out_file ("books_data.txt");
- 
-    if(ini_file && out_file)
+    size_t count = 0;
+    while ( getline(myfile, line) )
     {
- 
-        while(getline(ini_file,line))
-        {
-            out_file << line << "\n";
-        }
-    } 
-    else 
-    {
-        //Something went wrong
-        printf("Cannot Read File");
+        ++count;
     }
-    //Closing file
-    ini_file.close();
-    out_file.close();
+    return count;
 }
 
-void updatedatabase(std::string a){
-    std::string item_name;
-    std::ifstream nameFileout;
+void delete_last_line(std::string filename){
+    std::ifstream fileIn(filename);  // Open for reading
+    std::stringstream buffer;  // Store contents in a std::string
+    buffer << fileIn.rdbuf();
+    std::string contents = buffer.str();
 
-    nameFileout.open("books_data.txt");
-    std::string to_write="";
-    while (std::getline(nameFileout, item_name))
+    fileIn.close();
+    contents.pop_back();  // Remove last character
+
+    std::ofstream fileOut(filename , std::ios::trunc);  // Open for writing (while also clearing file)
+    fileOut << contents;  // Output contents with removed character
+    fileOut.close(); 
+};
+
+void get_last_lines(std::string file){
+    // This function reads the last n lines from a file (discards the previous lines)
+    std::ifstream myfile("copy.txt");
+    std::ofstream fileo(file);
+    int count = count_lines();
+    std::string line;
+    for ( int i = 0; i < count - NUMBER_OF_LINES; ++i )
     {
-
-        // Write to the file
-        std::string title = a;
-         
-        std::string s = item_name.substr(item_name.find(':')+2);
-        if(s == title)
-        {
-            int r=3;
-            while(r>0)
-            {
-                std::getline(nameFileout, item_name);
-                r--;
-            }
-            continue;
-        }
-        to_write += item_name;
-        to_write += "\n";
+        getline(myfile, line); /* read and discard: skip line */
     }
-    std::ofstream MyFile("temp.txt");
-    MyFile <<to_write<<"\n";
-    MyFile.close();
-    nameFileout.close();
-    toCopy();
-}
+    while (getline(myfile, line))
+    {
+        fileo << line << "\n";
+    }
+    remove("copy.txt");
+    fileo.close();
+};
 
 // User Class and its child classes - Librarian, Professor, and Student
 class User {
@@ -243,7 +232,6 @@ class User {
                         std::cout << "\nYOUR PROFILE SAYS:\n";
                         std::cout << "Username: " << usern << std::endl;
                         std::cout<<"Name: "<<line<<std::endl;
-                        std::cout<<"Role: "<<line<<std::endl;
                         getline(filei,line);
                         std::cout<<"Bio: "<<line<<std::endl;
                         filei.close();
@@ -409,10 +397,24 @@ class Book_database {
             std::cout << "\nEnter Book's Name : ";
             std::cin >> name;
             filei.open(fname.c_str());
+
+            // Create a copy of the file `books_data.txt`
+            std::ofstream out_file {"copy.txt"};
+            std::string copy_line;
+            while(getline(filei, copy_line)){
+                out_file << copy_line << '\n';
+                NUMBER_OF_LINES++;
+            }
+            filei.close();
+            out_file.close();
+
+            filei.open(fname.c_str());
+
             std::cout << "\n\n----------- CHOOSE THE BOOK YOU WANT TO UPDATE ------------\n";
-            std::ofstream fileout("temp.txt");  //Temporary file
             while (!filei.eof())
             {
+                // Debugging
+                printf("");
                 std::string choice;
                 getline(filei, title);
                 getline(filei, author);
@@ -426,6 +428,8 @@ class Book_database {
                 std::transform(title1.begin(), title1.end(), title1.begin(), ::tolower);
                 if ((name == title1) || (title1.find(name) != std::string::npos))
                 {
+                    std::string line;
+                    std::vector<std::string> lines;
                     number++;
                     std::cout << "\n---------- " << number << " ----------\n";
                     std::cout << title << std::endl;
@@ -435,17 +439,119 @@ class Book_database {
                     std::cout << "\n\nDo you want to update this book? [Y/N] : ";
                     std::cin >> choice;
                     if ((choice == "Y") || (choice == "y")){
-                        std::cout << "\nEnter New Title of Book (Leave blank if you don't want to update this) : ";
+                        std::cout << "\nEnter New Title of Book (Type `none` if you don't want to update this) : ";
                         std::cin >> title12;
-                        std::cout << "\nEnter New Authors of Book (Leave blank if you don't want to update this) : ";
+                        if (title12 != "none"){
+                            std::fstream file("copy.txt", std::ios::in);
+                            title12 = "Title : " + title12;
+                            while(std::getline(file, line)) {
+                                // std::cout << line << std::endl;
+
+                                std::string::size_type pos = 0;
+
+                                while ((pos = line.find(title, pos)) != std::string::npos){
+                                    line.replace(pos, line.size(), title12);
+                                    pos += title12.size();
+                                }
+
+                                lines.push_back(line);
+                            }
+                            file.close();
+                            file.open("copy.txt", std::ios::out | std::ios::trunc);
+
+                            for(const auto& i : lines) {
+                                file << i << std::endl;
+                            }
+                            file.close();
+                        }
+                        std::cout << "\nEnter New Authors of Book (Type `none` if you don't want to update this) : ";
                         std::cin >> author1;
-                        std::cout << "\nEnter New ISBN of Book (Leave blank if you don't want to update this) : ";
+                        if (author1 != "none"){
+                            std::fstream file("copy.txt", std::ios::in);
+                            author1 = "Authors : " + author1;
+                            while(std::getline(file, line)) {
+                                // std::cout << line << std::endl;
+
+                                std::string::size_type pos = 0;
+
+                                while ((pos = line.find(author, pos)) != std::string::npos){
+                                    line.replace(pos, line.size(), author1);
+                                    pos += author1.size();
+                                }
+
+                                lines.push_back(line);
+                            }
+                            file.close();
+                            file.open("copy.txt", std::ios::out | std::ios::trunc);
+
+                            for(const auto& i : lines) {
+                                file << i << std::endl;
+                            }
+                            file.close();
+                        }
+                        std::cout << "\nEnter New ISBN of Book (Type `none` if you don't want to update this) : ";
                         std::cin >> isbn1;
-                        std::cout << "\nEnter New Publisher of Book (Leave blank if you don't want to update this) : ";
+                        if (isbn1 != "none"){
+                            std::fstream file("copy.txt", std::ios::in);
+                            isbn1 = "ISBN : " + isbn1;
+                            while(std::getline(file, line)) {
+                                // std::cout << line << std::endl;
+
+                                std::string::size_type pos = 0;
+
+                                while ((pos = line.find(isbn, pos)) != std::string::npos){
+                                    line.replace(pos, line.size(), isbn1);
+                                    pos += isbn1.size();
+                                }
+
+                                lines.push_back(line);
+                            }
+                            file.close();
+                            file.open("copy.txt", std::ios::out | std::ios::trunc);
+
+                            for(const auto& i : lines) {
+                                file << i << std::endl;
+                            }
+                            file.close();
+                        }
+                        std::cout << "\nEnter New Publisher of Book (Type `none` if you don't want to update this) : ";
                         std::cin >> publication1;
+                        if (publication1 != "none"){
+                            std::fstream file("copy.txt", std::ios::in);
+                            publication1 = "Publication : " + publication1;
+                            while(std::getline(file, line)) {
+                                // std::cout << line << std::endl;
+
+                                std::string::size_type pos = 0;
+
+                                while ((pos = line.find(publication, pos)) != std::string::npos){
+                                    line.replace(pos, line.size(), publication1);
+                                    pos += publication1.size();
+                                }
+
+                                lines.push_back(line);
+                            }
+                            file.close();
+                            file.open("copy.txt", std::ios::out | std::ios::trunc);
+
+                            for(const auto& i : lines) {
+                                file << i << std::endl;
+                            }
+                            file.close();
+                        }
                     }
+                    printf("\n---------------- BOOK SUCCESSFULLY UPDATED ----------------\n");
                 }
             };
+            // Get the last lines from `copy.txt` and keep it in `books_data.txt`
+            filei.close();
+            get_last_lines("books_data.txt");
+            delete_last_line("books_data.txt");
+            if (number == 0)
+            {
+                // Printing ASCII art
+                printf("%s\n", NOTFOUND);
+            }
         };
 
         void delete_books(){
@@ -482,7 +588,7 @@ class Book_database {
                     std::cout << "\n\nDo you want to update this book? [Y/N] : ";
                     std::cin >> choice;
                     if ((choice == "Y") || (choice == "y")){
-                        updatedatabase(title);
+                        // updatedatabase(title);
                     }
                 }
             };
