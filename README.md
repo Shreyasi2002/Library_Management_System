@@ -1,4 +1,4 @@
-# Library Management System
+# Library Management System (C++)
 
 The mentioned application allows three types of users to register and login -
 1. Professor
